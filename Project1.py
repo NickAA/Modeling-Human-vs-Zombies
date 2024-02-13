@@ -5,33 +5,33 @@ import math
 if __name__ == "__main__":
 
     susceptible = 7000000000
-    infected = 100
+    infected = 500000
     death = 0
 
     Humans, Zombies, Death = list(), list(), list()
     month = 0
 
-    while susceptible > 0 and infected > 0:
+    while (susceptible != 0 and infected != 0) and (month < 50*12 and (susceptible > 100 or infected > 100)):
 
         SI = susceptible * infected
-        Alpha = 0.06234375
-        Mu = 0.016875
-        Epsilon = 0.0084375
+        Alpha = 0.06234375                  # Infection rate
+        Mu = 0.016875                       # Cure Rate
+        Epsilon = 0.0084375                 # Killed Zombies
 
-        birthRate = math.ceil(susceptible * 0.018/12)
-        naturalDeath = math.ceil(susceptible * 0.0077/12)
+        birthRate = round(susceptible * 0.018/12)
+        naturalDeath = round(susceptible * 0.0077/12)
 
-        curedZombies = math.ceil(infected * math.log(susceptible, 100) * Mu)
-        peopleBitten = math.ceil(infected * Alpha * math.log(susceptible, 10))
+        curedZombies = round(Mu * SI / (susceptible + infected))
+        peopleBitten = round(Alpha * SI / (susceptible + infected))
 
-        killedZombies = math.ceil(math.log(susceptible, 100) * infected * Epsilon)
+        killedZombies = round(Epsilon * SI / (susceptible + infected))
 
         susceptible += birthRate + curedZombies - peopleBitten - naturalDeath
         infected += peopleBitten - curedZombies - killedZombies
         death += killedZombies + naturalDeath
 
         print(f"Birthrate = {birthRate}\tNaturalDeath = {naturalDeath}\tCuredZombies = {curedZombies}\tPeoplebitten = {peopleBitten}\tkilledzomb = {killedZombies}\nSusceptible = {susceptible}\nInfected = {infected}\nDeath = {death}\nMonth = {month}\nYear {int(month/12)} Month {month%12}")
-        time.sleep(0.05)
+        #time.sleep(0.05)
         Humans.append(susceptible)
         Zombies.append(infected)
         Death.append(death)
@@ -44,9 +44,8 @@ if __name__ == "__main__":
     plt.plot(Death, label = "Death")
     plt.ylim(0)
     plt.xlim(0)
-    plt.ylabel("Population")
+    plt.ylabel("Population (In Billions)")
     plt.xlabel("Months")
-    plt.title("Human vs Zombies")
 
     plt.legend()
     plt.show()
